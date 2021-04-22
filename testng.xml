@@ -6,7 +6,15 @@
   </listeners>
   <test thread-count="1" name="Test">
     <classes>
-	  <class name="example.amazon_book_search.BrowseBook"/>
+	  <class name="example.amazon_book_search.BrowseBook">
+ 		<methods>
+        	<include name="searchForBook" />
+        	<include name="searchResultsProductPrice" />
+        	<include name="verifyProductPagePrice" />
+        	<exclude name="verifyCartPagePrice" />
+        	<exclude name="verifyCheckoutPagePrice" />
+        </methods>  
+      </class>  
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

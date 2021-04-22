@@ -30,6 +30,14 @@ public class Base {
 		return driver;
 	}
 	
+	public String getURL() throws IOException {
+		Properties prop = new Properties();
+		FileInputStream fis = new FileInputStream("src\\main\\resources\\data.properties");
+		
+		prop.load(fis);
+		return prop.getProperty("url");
+	}
+	
 	public void getScreenshot(String testCase, WebDriver driver) throws IOException
 	{
 		TakesScreenshot ts = (TakesScreenshot) driver;

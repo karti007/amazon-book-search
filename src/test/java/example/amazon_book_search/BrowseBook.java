@@ -1,15 +1,17 @@
 package example.amazon_book_search;
 
 import java.io.IOException;
-import java.util.List;
 
-import org.openqa.selenium.WebElement;
 import org.testng.Assert;
 import org.testng.annotations.AfterTest;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
-import pageObjects.LandingPage;
+import pageObjects.CartPage;
+import pageObjects.CheckOutPage;
+import pageObjects.HomePage;
+import pageObjects.ProductPage;
+import pageObjects.SearchResults;
 
 public class BrowseBook extends Base {
 
@@ -20,39 +22,41 @@ public class BrowseBook extends Base {
 	@BeforeTest
 	public void initialize() throws IOException {
 		driver = initializeDriver();
-		driver.get("https://www.amazon.com");
+		driver.get(getURL());
 		driver.manage().window().maximize();
 	}
 
 	@Test
-	public void bookSearch() throws InterruptedException {
-		LandingPage lp = new LandingPage(driver);
-		lp.getSearchBox().sendKeys("qa testing for beginners");
-		lp.getSearchButton().click();
+	public void searchForBook() {
+		HomePage hp = new HomePage(driver);
+		hp.sendDataSearchBox("qa testing for beginners");
+		hp.clickSearchButton();
+	}
 
-		List<WebElement> products = lp.getProducts();
-		howManyProducts = 1;
-		count = 1;
+	@Test
+	public void searchResultsProductPrice() {
+		SearchResults sr = new SearchResults(driver);
+		price = sr.getPriceForFirstProduct();
+	}
 
-		for (WebElement product : products) {
-			while (count <= howManyProducts) {
-				String whole = product.findElement(lp.getWhole()).getText();
-				String decimal = product.findElement(lp.getDecimal()).getText();
-				price = '$' + whole + '.' + decimal;
-				product.click();
-				break;
-			}
-			if (price != null) {
-				break;
-			}
-		}
-		Assert.assertEquals(lp.getBuyPrice().getText(), price);
+	@Test
+	public void verifyProductPagePrice() {		
+		ProductPage pp = new ProductPage(driver);
+		Assert.assertEquals(pp.getBuyPrice(), price);
+		pp.addToCart();
+	}
 
-		lp.getAddToCart().click();
-		Assert.assertEquals(lp.getSubCart().getText(), price);
+	@Test(dependsOnMethods= {"verifyProductPagePrice"})
+	public void verifyCartPagePrice() {
+		CartPage cp = new CartPage(driver);
+		Assert.assertEquals(cp.getCartPrice(), price);
+		cp.proceedToCheckOut();
+	}
 
-		lp.getProceedToCheckOut().click();
-		Assert.assertEquals(lp.getCheckOutPrice().getText(), price);
+	@Test(dependsOnMethods= {"verifyCartPagePrice"})
+	public void verifyCheckoutPagePrice() {
+		CheckOutPage cop = new CheckOutPage(driver);
+		Assert.assertEquals(cop.getCheckOutPrice(), price);
 	}
 
 	@AfterTest
