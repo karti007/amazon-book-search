@@ -11,8 +11,8 @@
         	<include name="searchForBook" />
         	<include name="searchResultsProductPrice" />
         	<include name="verifyProductPagePrice" />
-        	<exclude name="verifyCartPagePrice" />
-        	<exclude name="verifyCheckoutPagePrice" />
+        	<include name="verifyCartPagePrice" />
+        	<include name="verifyCheckoutPagePrice" />
         </methods>  
       </class>  
     </classes>
